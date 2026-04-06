@@ -1,0 +1,320 @@
+msgid ""
+msgstr ""
+"Language: en_US\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "App EF"
+msgstr "App EF"
+
+msgid "Usuarios"
+msgstr "Users"
+
+msgid "Tareas"
+msgstr "Tasks"
+
+msgid "Mi perfil"
+msgstr "My profile"
+
+msgid "Pagos"
+msgstr "Payments"
+
+msgid "Salir"
+msgstr "Log out"
+
+msgid "Iniciar sesión"
+msgstr "Log in"
+
+msgid "Registro"
+msgstr "Sign up"
+
+msgid "Español"
+msgstr "Spanish"
+
+msgid "English"
+msgstr "English"
+
+msgid "Correo o contraseña incorrectos."
+msgstr "Incorrect email or password."
+
+msgid "Ingrese su correo y contraseña"
+msgstr "Enter your email and password"
+
+msgid "Correo"
+msgstr "Email"
+
+msgid "Contraseña"
+msgstr "Password"
+
+msgid "Entrar"
+msgstr "Sign in"
+
+msgid "Crear una cuenta"
+msgstr "Create an account"
+
+msgid "Mis tareas"
+msgstr "My tasks"
+
+msgid "Nueva tarea"
+msgstr "New task"
+
+msgid "Editar tarea"
+msgstr "Edit task"
+
+msgid "Búsqueda y filtros"
+msgstr "Search and filters"
+
+msgid "Buscar en título o descripción"
+msgstr "Search title or description"
+
+msgid "Estado"
+msgstr "Status"
+
+msgid "Todos los estados"
+msgstr "All statuses"
+
+msgid "Pendiente"
+msgstr "Pending"
+
+msgid "En curso"
+msgstr "In progress"
+
+msgid "Completada"
+msgstr "Completed"
+
+msgid "Aplicar"
+msgstr "Apply"
+
+msgid "Título"
+msgstr "Title"
+
+msgid "Vence"
+msgstr "Due"
+
+msgid "Acciones"
+msgstr "Actions"
+
+msgid "Ver"
+msgstr "View"
+
+msgid "Editar"
+msgstr "Edit"
+
+msgid "Eliminar"
+msgstr "Delete"
+
+msgid "¿Eliminar esta tarea?"
+msgstr "Delete this task?"
+
+msgid "Primera"
+msgstr "First"
+
+msgid "Anterior"
+msgstr "Previous"
+
+msgid "Siguiente"
+msgstr "Next"
+
+msgid "Última"
+msgstr "Last"
+
+msgid "Página {{page}} de {{pages}}, mostrando {{current}} de {{count}}"
+msgstr "Page {{page}} of {{pages}}, showing {{current}} of {{count}}"
+
+msgid "Volver al listado"
+msgstr "Back to list"
+
+msgid "Descripción"
+msgstr "Description"
+
+msgid "Sin descripción"
+msgstr "No description"
+
+msgid "Contenido en español (idioma base)"
+msgstr "Content in Spanish (base language)"
+
+msgid "Traducción al inglés (opcional)"
+msgstr "English translation (optional)"
+
+msgid "Si completa estos campos, quien use la interfaz en inglés verá este texto."
+msgstr "If you fill these in, users with the English interface will see this text."
+
+msgid "Título (English)"
+msgstr "Title (English)"
+
+msgid "Descripción (English)"
+msgstr "Description (English)"
+
+msgid "Fecha de vencimiento"
+msgstr "Due date"
+
+msgid "Guardar"
+msgstr "Save"
+
+msgid "Cancelar"
+msgstr "Cancel"
+
+msgid "Cree su cuenta"
+msgstr "Create your account"
+
+msgid "Nombre"
+msgstr "First name"
+
+msgid "Apellido"
+msgstr "Last name"
+
+msgid "Teléfono"
+msgstr "Phone"
+
+msgid "Idioma de la interfaz"
+msgstr "Interface language"
+
+msgid "Registrarse"
+msgstr "Register"
+
+msgid "¿Ya tiene cuenta? Inicie sesión"
+msgstr "Already have an account? Log in"
+
+msgid "Datos personales e idioma"
+msgstr "Personal data and language"
+
+msgid "Contraseña (vacío para no cambiar)"
+msgstr "Password (leave blank to keep current)"
+
+msgid "Guardar perfil"
+msgstr "Save profile"
+
+msgid "Zona de riesgo"
+msgstr "Danger zone"
+
+msgid "Eliminar mi cuenta"
+msgstr "Delete my account"
+
+msgid "¿Seguro que desea eliminar su cuenta? Esta acción no se puede deshacer."
+msgstr "Are you sure you want to delete your account? This cannot be undone."
+
+msgid "Cuenta creada. Inicie sesión con su correo."
+msgstr "Account created. Please log in with your email."
+
+msgid "No se pudo registrar. Revise los datos."
+msgstr "Registration failed. Please check your data."
+
+msgid "Perfil actualizado."
+msgstr "Profile updated."
+
+msgid "No se pudo guardar el perfil."
+msgstr "Could not save profile."
+
+msgid "Idioma actualizado."
+msgstr "Language updated."
+
+msgid "No se pudo guardar el idioma."
+msgstr "Could not save language."
+
+msgid "Idioma no válido."
+msgstr "Invalid language."
+
+msgid "La tarea se guardó correctamente."
+msgstr "Task saved successfully."
+
+msgid "No se pudo guardar la tarea. Revise los datos."
+msgstr "Could not save the task. Please check your data."
+
+msgid "La tarea se eliminó."
+msgstr "Task deleted."
+
+msgid "No se pudo eliminar la tarea."
+msgstr "Could not delete the task."
+
+msgid "No puede acceder a esta tarea."
+msgstr "You cannot access this task."
+
+msgid "No puede gestionar el perfil de otra persona."
+msgstr "You cannot manage another person's profile."
+
+msgid "Para nuevas cuentas use el registro público."
+msgstr "For new accounts, use public registration."
+
+msgid "Su cuenta fue eliminada."
+msgstr "Your account was deleted."
+
+msgid "El idioma no es válido."
+msgstr "The language is not valid."
+
+msgid "La contraseña es obligatoria"
+msgstr "Password is required"
+
+msgid "Dejar vacío para no cambiar"
+msgstr "Leave empty to keep unchanged"
+
+msgid "El pago se guardó correctamente."
+msgstr "Payment saved successfully."
+
+msgid "No se pudo guardar el pago."
+msgstr "Could not save the payment."
+
+msgid "El pago se eliminó."
+msgstr "Payment deleted."
+
+msgid "No se pudo eliminar el pago."
+msgstr "Could not delete the payment."
+
+msgid "Registrar pago"
+msgstr "Record payment"
+
+msgid "Datos del pago"
+msgstr "Payment details"
+
+msgid "Método"
+msgstr "Method"
+
+msgid "Monto"
+msgstr "Amount"
+
+msgid "Creado"
+msgstr "Created"
+
+msgid "Actualizado"
+msgstr "Updated"
+
+msgid "¿Eliminar este pago?"
+msgstr "Delete this payment?"
+
+msgid "Tarjeta de crédito"
+msgstr "Credit card"
+
+msgid "Tarjeta de débito"
+msgstr "Debit card"
+
+msgid "PayPal"
+msgstr "PayPal"
+
+msgid "Transferencia"
+msgstr "Bank transfer"
+
+msgid "Efectivo"
+msgstr "Cash"
+
+msgid "Criptomoneda"
+msgstr "Cryptocurrency"
+
+msgid "Completado"
+msgstr "Completed"
+
+msgid "Fallido"
+msgstr "Failed"
+
+msgid "Reembolsado"
+msgstr "Refunded"
+
+msgid "Cancelado"
+msgstr "Canceled"
+
+msgid "Pago #{0}"
+msgstr "Payment #{0}"
+
+msgid "Id"
+msgstr "ID"
+
+msgid "Editar pago"
+msgstr "Edit payment"

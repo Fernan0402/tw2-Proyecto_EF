@@ -1,0 +1,8 @@
+msgid ""
+msgstr ""
+"Language: es_ES\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+# Catálogo base en español: los msgid del código ya están en español;
+# este archivo fija el locale y permite ampliar variantes regionales si hiciera falta.
