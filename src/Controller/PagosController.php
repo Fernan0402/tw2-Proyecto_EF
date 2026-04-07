@@ -51,6 +51,12 @@ class PagosController extends AppController
         $pago = $this->Pagos->newEmptyEntity();
         if ($this->request->is('post')) {
             $data = $this->request->getData();
+            if ($this->isAdminOrEmpleado() && empty($data['user_id'])) {
+                $this->Flash->error(__('Debe seleccionar un usuario.'));
+                $users = $this->fetchUsersList();
+                $this->set(compact('users', 'pago'));
+                return null;
+            }
             if (!$this->isAdminOrEmpleado()) {
                 $data['user_id'] = $this->Authentication->getIdentity()->getIdentifier();
             }
@@ -132,7 +138,9 @@ class PagosController extends AppController
      */
     protected function fetchUsersList(): array
     {
-        $users = $this->Users->find('list', keyField: 'id', valueField: function ($entity) {
+        /** @var \App\Model\Table\UsersTable $usersTable */
+        $usersTable = $this->fetchTable('Users');
+        $users = $usersTable->find('list', keyField: 'id', valueField: function ($entity) {
             return $entity->nombre . ' ' . $entity->apellido;
         })->orderBy(['nombre' => 'ASC', 'apellido' => 'ASC']);
 
