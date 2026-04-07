@@ -6,6 +6,7 @@ SET NAMES utf8mb4;
 
 CREATE TABLE IF NOT EXISTS `pagos` (
   `id` int NOT NULL AUTO_INCREMENT,
+  `user_id` int NOT NULL,
   `metodo` enum('tarjeta_credito','tarjeta_debito','paypal','transferencia','efectivo','cripto') NOT NULL,
   `monto` decimal(10,2) NOT NULL,
   `estado` enum('pendiente','completado','fallido','reembolsado','cancelado') NOT NULL DEFAULT 'pendiente',
@@ -15,5 +16,7 @@ CREATE TABLE IF NOT EXISTS `pagos` (
   `fecha_actualizacion` datetime NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
   PRIMARY KEY (`id`),
   KEY `idx_pagos_estado` (`estado`),
-  KEY `idx_pagos_metodo` (`metodo`)
+  KEY `idx_pagos_metodo` (`metodo`),
+  KEY `idx_pagos_user` (`user_id`),
+  CONSTRAINT `fk_pagos_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -68,6 +68,9 @@ class UsersController extends AppController
             if ($user->language === null || $user->language === '') {
                 $user->language = 'es';
             }
+            if ($user->rol === null || $user->rol === '') {
+                $user->rol = 'usuario';
+            }
             if ($this->Users->save($user)) {
                 $this->Flash->success(__('Cuenta creada. Inicie sesión con su correo.'));
 
@@ -79,13 +82,120 @@ class UsersController extends AppController
     }
 
     /**
-     * Tras el login, la app lleva al tablero de tareas (no a un listado global de personas).
+     * Lista de usuarios - solo admin
      *
-     * @return \Cake\Http\Response|null
+     * @return \Cake\Http\Response|null|void
      */
     public function index()
     {
-        return $this->redirect(['controller' => 'Tasks', 'action' => 'index']);
+        if (!$this->isAdmin()) {
+            return $this->redirect(['controller' => 'Tasks', 'action' => 'index']);
+        }
+
+        $users = $this->paginate($this->Users->find()->orderBy(['Users.apellido' => 'ASC', 'Users.nombre' => 'ASC']));
+        $this->set(compact('users'));
+    }
+
+    /**
+     * Ver perfil de usuario - admin puede ver cualquiera, otros solo propio
+     *
+     * @param string|null $id Id
+     * @return \Cake\Http\Response|null|void
+     */
+    public function view(?string $id = null)
+    {
+        if (!$this->isAdmin()) {
+            $id = (string)$this->getCurrentUserId();
+        }
+        $user = $this->Users->get($id, contain: []);
+        $this->set(compact('user'));
+    }
+
+    /**
+     * Alta de usuarios - solo admin y empleado pueden crear
+     *
+     * @return \Cake\Http\Response|null|void
+     */
+    public function add()
+    {
+        if (!$this->isAdminOrEmpleado()) {
+            $this->Flash->error(__('No tiene permisos para crear usuarios.'));
+            return $this->redirect(['controller' => 'Tasks', 'action' => 'index']);
+        }
+
+        $user = $this->Users->newEmptyEntity();
+        if ($this->request->is('post')) {
+            $user = $this->Users->patchEntity($user, $this->request->getData());
+            if (!isset($user->rol) || $user->rol === '') {
+                $user->rol = 'usuario';
+            }
+            if ($this->Users->save($user)) {
+                $this->Flash->success(__('El usuario fue guardado.'));
+
+                return $this->redirect(['action' => 'index']);
+            }
+            $this->Flash->error(__('No se pudo guardar el usuario.'));
+        }
+        $this->set(compact('user'));
+    }
+
+    /**
+     * Editar usuario - admin puede editar cualquiera, otros solo propio
+     *
+     * @param string|null $id Id
+     * @return \Cake\Http\Response|null|void
+     */
+    public function edit(?string $id = null)
+    {
+        if (!$this->isAdmin()) {
+            $id = (string)$this->getCurrentUserId();
+        }
+        $user = $this->Users->get($id, contain: []);
+        if ($this->request->is(['patch', 'post', 'put'])) {
+            $data = $this->request->getData();
+            if (isset($data['password']) && $data['password'] === '') {
+                unset($data['password']);
+            }
+            if (!$this->isAdmin() && isset($data['rol'])) {
+                unset($data['rol']);
+            }
+            $user = $this->Users->patchEntity($user, $data);
+            if ($this->Users->save($user)) {
+                $this->syncIdentityLocale($user);
+                $this->Flash->success(__('El usuario fue guardado.'));
+
+                if ($this->isAdmin()) {
+                    return $this->redirect(['action' => 'index']);
+                }
+
+                return $this->redirect(['action' => 'profile']);
+            }
+            $this->Flash->error(__('No se pudo guardar el usuario.'));
+        }
+        $this->set(compact('user'));
+    }
+
+    /**
+     * Eliminar usuario - solo admin
+     *
+     * @param string|null $id Id
+     * @return \Cake\Http\Response|null
+     */
+    public function delete(?string $id = null)
+    {
+        $this->request->allowMethod(['post', 'delete']);
+        if (!$this->isAdmin()) {
+            $this->Flash->error(__('No tiene permisos para eliminar usuarios.'));
+            return $this->redirect(['controller' => 'Tasks', 'action' => 'index']);
+        }
+        $user = $this->Users->get($id);
+        if ($this->Users->delete($user)) {
+            $this->Flash->success(__('El usuario fue eliminado.'));
+        } else {
+            $this->Flash->error(__('No se pudo eliminar el usuario.'));
+        }
+
+        return $this->redirect(['action' => 'index']);
     }
 
     /**
@@ -101,6 +211,9 @@ class UsersController extends AppController
             $data = $this->request->getData();
             if (isset($data['password']) && $data['password'] === '') {
                 unset($data['password']);
+            }
+            if (!$this->isAdmin() && isset($data['rol'])) {
+                unset($data['rol']);
             }
             $user = $this->Users->patchEntity($user, $data);
             if ($this->Users->save($user)) {
@@ -140,85 +253,5 @@ class UsersController extends AppController
         }
 
         return $this->redirect($this->referer(['controller' => 'Tasks', 'action' => 'index'], true));
-    }
-
-    /**
-     * @param string|null $id Id
-     * @return \Cake\Http\Response|null|void
-     */
-    public function view(?string $id = null)
-    {
-        $this->denyUnlessSelf((int)$id);
-        $user = $this->Users->get($id, contain: []);
-        $this->set(compact('user'));
-    }
-
-    /**
-     * Alta de usuarios solo con sesión: se desvía al registro público por claridad ética.
-     *
-     * @return \Cake\Http\Response|null|void
-     */
-    public function add()
-    {
-        $this->Flash->warning(__('Para nuevas cuentas use el registro público.'));
-
-        return $this->redirect(['action' => 'register']);
-    }
-
-    /**
-     * @param string|null $id Id
-     * @return \Cake\Http\Response|null|void
-     */
-    public function edit(?string $id = null)
-    {
-        $this->denyUnlessSelf((int)$id);
-        $user = $this->Users->get($id, contain: []);
-        if ($this->request->is(['patch', 'post', 'put'])) {
-            $data = $this->request->getData();
-            if (isset($data['password']) && $data['password'] === '') {
-                unset($data['password']);
-            }
-            $user = $this->Users->patchEntity($user, $data);
-            if ($this->Users->save($user)) {
-                $this->syncIdentityLocale($user);
-                $this->Flash->success(__('The user has been saved.'));
-
-                return $this->redirect(['action' => 'profile']);
-            }
-            $this->Flash->error(__('The user could not be saved. Please, try again.'));
-        }
-        $this->set(compact('user'));
-    }
-
-    /**
-     * @param string|null $id Id
-     * @return \Cake\Http\Response|null
-     */
-    public function delete(?string $id = null)
-    {
-        $this->request->allowMethod(['post', 'delete']);
-        $this->denyUnlessSelf((int)$id);
-        $user = $this->Users->get($id);
-        if ($this->Users->delete($user)) {
-            $this->Authentication->logout();
-            $this->Flash->success(__('Su cuenta fue eliminada.'));
-
-            return $this->redirect(['action' => 'login']);
-        }
-        $this->Flash->error(__('The user could not be deleted. Please, try again.'));
-
-        return $this->redirect(['action' => 'profile']);
-    }
-
-    /**
-     * @param int $userId Id de usuario solicitado
-     * @return void
-     */
-    protected function denyUnlessSelf(int $userId): void
-    {
-        $me = (int)$this->Authentication->getIdentity()->getIdentifier();
-        if ($userId !== $me) {
-            throw new \Cake\Http\Exception\ForbiddenException(__('No puede gestionar el perfil de otra persona.'));
-        }
     }
 }

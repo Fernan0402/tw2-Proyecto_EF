@@ -34,6 +34,11 @@ class PagosTable extends Table
             'created' => 'fecha_creacion',
             'modified' => 'fecha_actualizacion',
         ]);
+
+        $this->belongsTo('Users', [
+            'foreignKey' => 'user_id',
+            'joinType' => 'INNER',
+        ]);
     }
 
     /**
@@ -65,6 +70,11 @@ class PagosTable extends Table
      */
     public function validationDefault(Validator $validator): Validator
     {
+        $validator
+            ->integer('user_id')
+            ->requirePresence('user_id', 'create')
+            ->notEmptyString('user_id');
+
         $validator
             ->scalar('metodo')
             ->inList('metodo', self::metodos())

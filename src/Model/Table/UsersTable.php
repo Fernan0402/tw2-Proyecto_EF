@@ -99,6 +99,11 @@ class UsersTable extends Table
                 'message' => __('El idioma no es válido.'),
             ]);
 
+        $validator
+            ->scalar('rol')
+            ->inList('rol', ['empleado', 'usuario'])
+            ->allowEmptyString('rol');
+
         return $validator;
     }
 

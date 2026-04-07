@@ -5,8 +5,8 @@
  */
 ?>
 <div class="users index content">
-    <?= $this->Html->link(__('New User'), ['action' => 'add'], ['class' => 'button float-right']) ?>
-    <h3><?= __('Users') ?></h3>
+    <?= $this->Html->link(__('Nuevo Usuario'), ['action' => 'add'], ['class' => 'button float-right']) ?>
+    <h3><?= __('Usuarios') ?></h3>
     <div class="table-responsive">
         <table>
             <thead>
@@ -15,11 +15,10 @@
                     <th><?= $this->Paginator->sort('nombre') ?></th>
                     <th><?= $this->Paginator->sort('apellido') ?></th>
                     <th><?= $this->Paginator->sort('correo') ?></th>
-                    <th><?= $this->Paginator->sort('telefono') ?></th>
+                    <th><?= $this->Paginator->sort('rol') ?></th>
                     <th><?= $this->Paginator->sort('language') ?></th>
                     <th><?= $this->Paginator->sort('created') ?></th>
-                    <th><?= $this->Paginator->sort('modified') ?></th>
-                    <th class="actions"><?= __('Actions') ?></th>
+                    <th class="actions"><?= __('Acciones') ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -29,19 +28,18 @@
                     <td><?= h($user->nombre) ?></td>
                     <td><?= h($user->apellido) ?></td>
                     <td><?= h($user->correo) ?></td>
-                    <td><?= h($user->telefono) ?></td>
+                    <td><?= h($user->rol) ?></td>
                     <td><?= h($user->language) ?></td>
                     <td><?= h($user->created) ?></td>
-                    <td><?= h($user->modified) ?></td>
                     <td class="actions">
-                        <?= $this->Html->link(__('View'), ['action' => 'view', $user->id]) ?>
-                        <?= $this->Html->link(__('Edit'), ['action' => 'edit', $user->id]) ?>
+                        <?= $this->Html->link(__('Ver'), ['action' => 'view', $user->id]) ?>
+                        <?= $this->Html->link(__('Editar'), ['action' => 'edit', $user->id]) ?>
                         <?= $this->Form->postLink(
-                            __('Delete'),
+                            __('Eliminar'),
                             ['action' => 'delete', $user->id],
                             [
                                 'method' => 'delete',
-                                'confirm' => __('Are you sure you want to delete # {0}?', $user->id),
+                                'confirm' => __('¿Estás seguro de eliminar # {0}?', $user->id),
                             ]
                         ) ?>
                     </td>

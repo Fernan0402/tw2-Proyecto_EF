@@ -2,6 +2,7 @@
 /**
  * @var \App\View\AppView $this
  * @var \App\Model\Entity\Task $task
+ * @var array $users
  */
 $this->assign('title', __('Nueva tarea'));
 $statusOptions = [
@@ -13,7 +14,10 @@ $statusOptions = [
 <div class="tasks form content">
     <?= $this->Form->create($task) ?>
     <fieldset>
-        <legend><?= __('Contenido en español (idioma base)') ?></legend>
+        <legend><?= __('Nueva tarea') ?></legend>
+        <?php if (isset($users) && !empty($users)): ?>
+            <?= $this->Form->control('user_id', ['label' => __('Usuario'), 'options' => $users, 'empty' => __('Seleccionar usuario')]) ?>
+        <?php endif; ?>
         <?= $this->Form->control('title', ['label' => __('Título')]) ?>
         <?= $this->Form->control('description', ['label' => __('Descripción'), 'type' => 'textarea']) ?>
         <?= $this->Form->control('status', ['label' => __('Estado'), 'options' => $statusOptions, 'default' => 'pending']) ?>

@@ -19,10 +19,14 @@ $languageOptions = ['es' => __('Español'), 'en' => __('English')];
             'label' => __('Idioma de la interfaz'),
             'options' => $languageOptions,
         ]) ?>
+        <?php if ($this->isAdmin()): ?>
+            <?= $this->Form->control('rol', ['label' => __('Rol'), 'options' => ['empleado' => 'Empleado', 'usuario' => 'Usuario']]) ?>
+        <?php endif; ?>
     </fieldset>
     <?= $this->Form->button(__('Guardar perfil')) ?>
     <?= $this->Form->end() ?>
 
+    <?php if (!$this->isAdmin()): ?>
     <div class="content" style="margin-top: 2rem;">
         <h4><?= __('Zona de riesgo') ?></h4>
         <?= $this->Form->postLink(
@@ -31,4 +35,5 @@ $languageOptions = ['es' => __('Español'), 'en' => __('English')];
             ['confirm' => __('¿Seguro que desea eliminar su cuenta? Esta acción no se puede deshacer.'), 'class' => 'button button-outline']
         ) ?>
     </div>
+    <?php endif; ?>
 </div>

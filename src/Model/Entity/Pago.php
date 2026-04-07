@@ -9,6 +9,7 @@ use Cake\ORM\Entity;
  * Registro de pago.
  *
  * @property int $id
+ * @property int $user_id
  * @property string $metodo
  * @property string $monto
  * @property string $estado
@@ -23,6 +24,7 @@ class Pago extends Entity
      * @var array<string, bool>
      */
     protected array $_accessible = [
+        'user_id' => true,
         'metodo' => true,
         'monto' => true,
         'estado' => true,

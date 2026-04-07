@@ -20,7 +20,6 @@ class TasksController extends AppController
     public function beforeFilter(EventInterface $event): void
     {
         parent::beforeFilter($event);
-        // Alinea las lecturas con el locale ya fijado en AppController (preferencia en BD).
         $this->Tasks->setLocale(I18n::getLocale());
     }
 
@@ -34,9 +33,14 @@ class TasksController extends AppController
         $identity = $this->Authentication->getIdentity();
         $userId = (int)$identity->getIdentifier();
 
-        $query = $this->Tasks->find()
-            ->where(['Tasks.user_id' => $userId])
-            ->orderByDesc('Tasks.modified');
+        if ($this->isAdminOrEmpleado()) {
+            $query = $this->Tasks->find()
+                ->orderByDesc('Tasks.modified');
+        } else {
+            $query = $this->Tasks->find()
+                ->where(['Tasks.user_id' => $userId])
+                ->orderByDesc('Tasks.modified');
+        }
 
         $q = $this->request->getQuery('q');
         if (is_string($q) && trim($q) !== '') {
@@ -76,7 +80,9 @@ class TasksController extends AppController
         $task = $this->Tasks->newEmptyEntity();
         if ($this->request->is('post')) {
             $data = $this->request->getData();
-            $data['user_id'] = $this->Authentication->getIdentity()->getIdentifier();
+            if (!$this->isAdminOrEmpleado()) {
+                $data['user_id'] = $this->Authentication->getIdentity()->getIdentifier();
+            }
             $task = $this->Tasks->patchEntity($task, $data, [
                 'associated' => ['_translations' => true],
             ]);
@@ -86,6 +92,11 @@ class TasksController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('No se pudo guardar la tarea. Revise los datos.'));
+        }
+
+        if ($this->isAdminOrEmpleado()) {
+            $users = $this->fetchUsersList();
+            $this->set(compact('users'));
         }
         $this->set(compact('task'));
     }
@@ -107,6 +118,11 @@ class TasksController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('No se pudo guardar la tarea. Revise los datos.'));
+        }
+
+        if ($this->isAdminOrEmpleado()) {
+            $users = $this->fetchUsersList();
+            $this->set(compact('users'));
         }
         $this->set(compact('task'));
     }
@@ -130,19 +146,30 @@ class TasksController extends AppController
 
     /**
      * @param int $id Id de tarea
-     * @return \App\Model\Entity\Task
-     */
-    /**
      * @param array<string, mixed> $contain Asociaciones para `get()`
+     * @return \App\Model\Entity\Task
      */
     protected function fetchOwnedTask(int $id, array $contain): \App\Model\Entity\Task
     {
         $userId = (int)$this->Authentication->getIdentity()->getIdentifier();
         $task = $this->Tasks->get($id, contain: $contain);
-        if ((int)$task->user_id !== $userId) {
+
+        if (!$this->isAdminOrEmpleado() && (int)$task->user_id !== $userId) {
             throw new \Cake\Http\Exception\ForbiddenException(__('No puede acceder a esta tarea.'));
         }
 
         return $task;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function fetchUsersList(): array
+    {
+        $users = $this->Users->find('list', keyField: 'id', valueField: function ($entity) {
+            return $entity->nombre . ' ' . $entity->apellido;
+        })->orderBy(['nombre' => 'ASC', 'apellido' => 'ASC']);
+
+        return $users->toArray();
     }
 }

@@ -87,4 +87,39 @@ class AppController extends Controller
         $this->Authentication->setIdentity($user);
         I18n::setLocale($this->languageToLocale((string)($user->language ?? 'es')));
     }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        $identity = $this->request->getAttribute('identity');
+        if ($identity === null) {
+            return false;
+        }
+
+        return $identity->get('rol') === 'admin';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdminOrEmpleado(): bool
+    {
+        $identity = $this->request->getAttribute('identity');
+        if ($identity === null) {
+            return false;
+        }
+        $rol = $identity->get('rol');
+
+        return $rol === 'admin' || $rol === 'empleado';
+    }
+
+    /**
+     * @return int
+     */
+    protected function getCurrentUserId(): int
+    {
+        return (int)$this->Authentication->getIdentity()->getIdentifier();
+    }
 }

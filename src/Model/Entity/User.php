@@ -16,6 +16,7 @@ use Cake\ORM\Entity;
  * @property string $password
  * @property string|null $telefono
  * @property string|null $language
+ * @property string|null $rol
  * @property \Cake\I18n\DateTime $created
  * @property \Cake\I18n\DateTime $modified
  */
@@ -31,6 +32,7 @@ class User extends Entity
         'password' => true,
         'telefono' => true,
         'language' => true,
+        'rol' => true,
         'created' => true,
         'modified' => true,
     ];
@@ -49,5 +51,29 @@ class User extends Entity
     protected function _setPassword(string $password): string
     {
         return (new DefaultPasswordHasher())->hash($password);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        return $this->rol === 'admin';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isEmpleado(): bool
+    {
+        return $this->rol === 'empleado';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUsuario(): bool
+    {
+        return $this->rol === 'usuario';
     }
 }

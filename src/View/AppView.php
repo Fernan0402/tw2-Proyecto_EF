@@ -6,7 +6,8 @@ declare(strict_types=1);
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
- * Redistributions of files must retain the above copyright notice.
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of this file must retain the above copyright notice.
  *
  * @copyright Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link      https://cakephp.org CakePHP(tm) Project
@@ -40,5 +41,32 @@ class AppView extends View
         $this->loadHelper('Authentication.Identity');
         $this->loadHelper('Paginator');
         $this->loadHelper('Number');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin(): bool
+    {
+        $identity = $this->getRequest()->getAttribute('identity');
+        if ($identity === null) {
+            return false;
+        }
+
+        return $identity->get('rol') === 'admin';
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdminOrEmpleado(): bool
+    {
+        $identity = $this->getRequest()->getAttribute('identity');
+        if ($identity === null) {
+            return false;
+        }
+        $rol = $identity->get('rol');
+
+        return $rol === 'admin' || $rol === 'empleado';
     }
 }

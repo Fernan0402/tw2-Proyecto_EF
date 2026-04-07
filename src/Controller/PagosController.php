@@ -18,7 +18,17 @@ class PagosController extends AppController
      */
     public function index(): void
     {
-        $query = $this->Pagos->find()->orderByDesc('Pagos.fecha_actualizacion');
+        $identity = $this->Authentication->getIdentity();
+        $userId = (int)$identity->getIdentifier();
+
+        if ($this->isAdminOrEmpleado()) {
+            $query = $this->Pagos->find()->orderByDesc('Pagos.fecha_actualizacion');
+        } else {
+            $query = $this->Pagos->find()
+                ->where(['Pagos.user_id' => $userId])
+                ->orderByDesc('Pagos.fecha_actualizacion');
+        }
+
         $pagos = $this->paginate($query);
         $this->set(compact('pagos'));
     }
@@ -29,7 +39,7 @@ class PagosController extends AppController
      */
     public function view(?string $id = null)
     {
-        $pago = $this->Pagos->get($id, contain: []);
+        $pago = $this->fetchOwnedPago((int)$id);
         $this->set(compact('pago'));
     }
 
@@ -40,13 +50,22 @@ class PagosController extends AppController
     {
         $pago = $this->Pagos->newEmptyEntity();
         if ($this->request->is('post')) {
-            $pago = $this->Pagos->patchEntity($pago, $this->request->getData());
+            $data = $this->request->getData();
+            if (!$this->isAdminOrEmpleado()) {
+                $data['user_id'] = $this->Authentication->getIdentity()->getIdentifier();
+            }
+            $pago = $this->Pagos->patchEntity($pago, $data);
             if ($this->Pagos->save($pago)) {
                 $this->Flash->success(__('El pago se guardó correctamente.'));
 
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('No se pudo guardar el pago.'));
+        }
+
+        if ($this->isAdminOrEmpleado()) {
+            $users = $this->fetchUsersList();
+            $this->set(compact('users'));
         }
         $this->set(compact('pago'));
     }
@@ -57,7 +76,7 @@ class PagosController extends AppController
      */
     public function edit(?string $id = null)
     {
-        $pago = $this->Pagos->get($id, contain: []);
+        $pago = $this->fetchOwnedPago((int)$id);
         if ($this->request->is(['patch', 'post', 'put'])) {
             $pago = $this->Pagos->patchEntity($pago, $this->request->getData());
             if ($this->Pagos->save($pago)) {
@@ -66,6 +85,11 @@ class PagosController extends AppController
                 return $this->redirect(['action' => 'index']);
             }
             $this->Flash->error(__('No se pudo guardar el pago.'));
+        }
+
+        if ($this->isAdminOrEmpleado()) {
+            $users = $this->fetchUsersList();
+            $this->set(compact('users'));
         }
         $this->set(compact('pago'));
     }
@@ -77,7 +101,7 @@ class PagosController extends AppController
     public function delete(?string $id = null)
     {
         $this->request->allowMethod(['post', 'delete']);
-        $pago = $this->Pagos->get($id);
+        $pago = $this->fetchOwnedPago((int)$id);
         if ($this->Pagos->delete($pago)) {
             $this->Flash->success(__('El pago se eliminó.'));
         } else {
@@ -85,6 +109,34 @@ class PagosController extends AppController
         }
 
         return $this->redirect(['action' => 'index']);
+    }
+
+    /**
+     * @param int $id Id de pago
+     * @return \App\Model\Entity\Pago
+     */
+    protected function fetchOwnedPago(int $id): \App\Model\Entity\Pago
+    {
+        $userId = (int)$this->Authentication->getIdentity()->getIdentifier();
+        $pago = $this->Pagos->get($id, contain: []);
+
+        if (!$this->isAdminOrEmpleado() && (int)$pago->user_id !== $userId) {
+            throw new \Cake\Http\Exception\ForbiddenException(__('No puede acceder a este pago.'));
+        }
+
+        return $pago;
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function fetchUsersList(): array
+    {
+        $users = $this->Users->find('list', keyField: 'id', valueField: function ($entity) {
+            return $entity->nombre . ' ' . $entity->apellido;
+        })->orderBy(['nombre' => 'ASC', 'apellido' => 'ASC']);
+
+        return $users->toArray();
     }
 
     /**

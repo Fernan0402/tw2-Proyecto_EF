@@ -40,9 +40,18 @@ $cakeDescription = 'App EF';
         </div>
         <div class="top-nav-links">
             <?php if ($this->Identity->isLoggedIn()) : ?>
-                <?= $this->Html->link(__('Tareas'), ['controller' => 'Tasks', 'action' => 'index']) ?>
+                <?php if ($this->isAdmin()) : ?>
+                    <?= $this->Html->link(__('Usuarios'), ['controller' => 'Users', 'action' => 'index']) ?>
+                    <?= $this->Html->link(__('Tareas'), ['controller' => 'Tasks', 'action' => 'index']) ?>
+                    <?= $this->Html->link(__('Pagos'), ['controller' => 'Pagos', 'action' => 'index']) ?>
+                <?php elseif ($this->isAdminOrEmpleado()) : ?>
+                    <?= $this->Html->link(__('Tareas'), ['controller' => 'Tasks', 'action' => 'index']) ?>
+                    <?= $this->Html->link(__('Pagos'), ['controller' => 'Pagos', 'action' => 'index']) ?>
+                <?php else : ?>
+                    <?= $this->Html->link(__('Mis Tareas'), ['controller' => 'Tasks', 'action' => 'index']) ?>
+                    <?= $this->Html->link(__('Mis Pagos'), ['controller' => 'Pagos', 'action' => 'index']) ?>
+                <?php endif; ?>
                 <?= $this->Html->link(__('Mi perfil'), ['controller' => 'Users', 'action' => 'profile']) ?>
-                <?= $this->Html->link(__('Pagos'), ['controller' => 'Pagos', 'action' => 'index']) ?>
                 <?= $this->Form->postLink(__('Español'), ['controller' => 'Users', 'action' => 'changeLanguage'], ['data' => ['language' => 'es'], 'class' => '']) ?>
                 <?= $this->Form->postLink(__('English'), ['controller' => 'Users', 'action' => 'changeLanguage'], ['data' => ['language' => 'en'], 'class' => '']) ?>
                 <?= $this->Html->link(__('Salir'), ['controller' => 'Users', 'action' => 'logout']) ?>
