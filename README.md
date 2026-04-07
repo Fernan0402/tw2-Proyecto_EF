@@ -11,8 +11,7 @@ Aplicación CakePHP 5.x para la gestión de tareas, pagos y usuarios con sistema
 5. [Configuración](#configuración)
 6. [Base de Datos](#base-de-datos)
 7. [Ejecución del Proyecto](#ejecución-del-proyecto)
-8. [Sistema de Roles y Permisos](#sistema-de-roles-y-permisos)
-9. [Credenciales de Ejemplo](#credenciales-de-ejemplo)
+
 
 ---
 
@@ -28,15 +27,10 @@ Aplicación CakePHP 5.x para la gestión de tareas, pagos y usuarios con sistema
 ---
 
 ## Requisitos del Sistema
-
-| Requisito | Versión Mínima |
-|-----------|----------------|
-| PHP | 8.3+ |
-| MySQL/MariaDB | 10.6+ / 10.6+ |
-| Composer | 2.x |
-| ext-mbstring | ✓ |
-| ext-intl | ✓ |
-| ext-pdo | ✓ |
+PHP 8.2 o superior
+Composer
+MariaDB o MySQL 5.7+ (compatible con el driver Mysql de CakePHP)
+Apache con mod_rewrite o el servidor integrado de PHP/Cake (bin/cake server)
 
 ---
 
@@ -102,21 +96,7 @@ cp config/.env.example config/.env
 
 Editar `config/.env` con los valores correctos:
 
-```env
-DEBUG=true
-APP_NAME=AppEF
-APP_ENCODING=UTF-8
-APP_DEFAULT_LOCALE=es_ES
-APP_DEFAULT_TIMEZONE=UTC
-
-SECURITY_SALT=tu_salt_aqui_mínimo_32_caracteres
-
-DATABASE_DRIVER=Mysql
-DATABASE_HOST=172.25.0.220
-DATABASE_PORT=3306
-DATABASE_NAME=db_ef
-DATABASE_USERNAME=tu_usuario
-DATABASE_PASSWORD=tu_contraseña
+```
 ```
 
 ### 4. Limpiar caché
