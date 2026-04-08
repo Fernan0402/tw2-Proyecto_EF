@@ -31,7 +31,7 @@ Aplicación web de gestión de tareas por usuario con registro, sesión, perfil 
    bin/cake migrations migrate
    ```
 
-   **Opción B — SQL manual:** ejecutar el script [config/schema/entregable_tareas.sql](config/schema/entregable_tareas.sql) sobre la misma base donde ya existe la tabla `users` (y el resto de tablas que uses).
+   **Opción B — SQL manual:** ejecutar el script sobre la misma base donde ya existe la tabla `users` (y el resto de tablas que uses).
 
 ## Cómo ejecutar
 
