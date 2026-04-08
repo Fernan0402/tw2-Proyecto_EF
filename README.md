@@ -108,25 +108,33 @@ Contiene todo el código fuente de la aplicación CakePHP.
 ### 3️⃣ Crear el Dockerfile
 
 ```dockerfile
-FROM php:8.2-apache
-
-# Instalar extensiones necesarias
-RUN apt-get update && apt-get install -y \
-    libicu-dev \
-    && docker-php-ext-install intl pdo pdo_mysql mysqli
-
-# Habilitar mod_rewrite
-RUN a2enmod rewrite
-
-# Copiar aplicación
-COPY app_ef/ /var/www/html/
-
-# Permisos
-RUN chown -R www-data:www-data /var/www/html && \
-    chmod -R 755 /var/www/html
-
-# Puerto
+FROM php:8.4-apache
+ 
+ENV APACHE_DOCUMENT_ROOT=/var/www/html/webroot
+ 
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+      libzip-dev libonig-dev libpng-dev libicu-dev zlib1g-dev libxml2-dev ca-certificates git unzip curl; \
+    docker-php-ext-install pdo pdo_mysql mysqli mbstring zip intl opcache xml; \
+    a2enmod rewrite headers; \
+    rm -rf /var/lib/apt/lists/*
+ 
+RUN sed -ri -e "s!/var/www/html!${APACHE_DOCUMENT_ROOT}!g" /etc/apache2/sites-available/*.conf \
+    && sed -ri -e "s!<Directory /var/www/html>!<Directory ${APACHE_DOCUMENT_ROOT}>!g" /etc/apache2/apache2.conf
+ 
+WORKDIR /var/www/html
+ 
+COPY app-ef/ /var/www/html
+ 
+RUN chown -R www-data:www-data /var/www/html \
+    && find /var/www/html -type d -exec chmod 755 {} \; \
+    && find /var/www/html -type f -exec chmod 644 {} \; \
+    && chmod -R u+w /var/www/html/tmp /var/www/html/logs || true
+ 
 EXPOSE 80
+ 
+CMD ["apache2-foreground"]
 ```
 
 📌 **¿Qué hace?**
@@ -279,10 +287,6 @@ podman logs ef-app
 
 ---
 
-## 👨‍💻 Autor
-
-Proyecto desarrollado como parte de la materia **Tecnología Web II**.
-
 
 ## Uso
 
@@ -290,20 +294,9 @@ Proyecto desarrollado como parte de la materia **Tecnología Web II**.
 - **Inicio de sesión:** `/` (ruta por defecto).
 - **Tareas:** cada usuario solo ve y gestiona sus propias tareas; en el listado hay filtros por estado, rango de fecha límite y texto.
 - **Perfil:** idioma de interfaz entre los anteriores y datos personales; el código se guarda en `perfiles.idioma` (p. ej. `es_ES`, `zh_CN`) y se sincroniza con `users.language`.
-- **Países / Usuarios:** módulos adicionales de ejemplo (requieren sesión).
 
 ## Estructura de base de datos relevante
 
 - `users` — usuarios (incluye `language` para compatibilidad).
-- `perfiles` — una fila por usuario (`idioma`, `biografia`).
 - `tareas` — `user_id`, `titulo`, `descripcion_es`, `descripcion_en`, `estado`, `fecha_limite`.
 
-## Documentación del entregable
-
-- [docs/INFORME_IMRD.md](docs/INFORME_IMRD.md) — informe en formato IMRD.
-- [docs/BITACORA_IA.md](docs/BITACORA_IA.md) — bitácora de uso de IA.
-- [docs/EVIDENCIAS.md](docs/EVIDENCIAS.md) — qué capturas o video conviene entregar.
-
-## Licencia
-
-MIT (igual que el esqueleto oficial de CakePHP).
