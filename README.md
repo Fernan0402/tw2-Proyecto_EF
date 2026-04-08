@@ -1,317 +1,309 @@
-# App EF - Sistema de Gestión
+# App de tareas (CakePHP 5)
 
-Aplicación CakePHP 5.x para la gestión de tareas, pagos y usuarios con sistema de roles y permisos.
+Aplicación web de gestión de tareas por usuario con registro, sesión, perfil con idioma (español, inglés), CRUD de tareas, filtros y descripciones bilingües por tarea.
 
-## Tabla de Contenidos
+## Requisitos
 
-1. [Descripción](#descripción)
-2. [Requisitos del Sistema](#requisitos-del-sistema)
-3. [Estructura del Proyecto](#estructura-del-proyecto)
-4. [Instalación](#instalación)
-5. [Configuración](#configuración)
-6. [Base de Datos](#base-de-datos)
-7. [Ejecución del Proyecto](#ejecución-del-proyecto)
-
-
----
-
-## Descripción
-
-**App EF** es una aplicación web desarrollada en CakePHP 5.x que permite:
-
-- Gestión de tareas personales (CRUD completo)
-- Gestión de pagos con múltiples métodos
-- Sistema de autenticación con idioma persistente
-- Control de acceso basado en roles (RBAC)
-
----
-
-## Requisitos del Sistema
-PHP 8.2 o superior
-Composer
-MariaDB o MySQL 5.7+ (compatible con el driver Mysql de CakePHP)
-Apache con mod_rewrite o el servidor integrado de PHP/Cake (bin/cake server)
-
----
-
-## Estructura del Proyecto
-
-```
-app-ef/
-├── config/                 # Configuración de CakePHP
-│   ├── app.php            # Configuración principal
-│   ├── app_local.php      # Configuración local (DB)
-│   ├── bootstrap.php      # Bootstrap de la aplicación
-│   └── routes.php         # Rutas de la aplicación
-├── db_ef.sql              # Script SQL de la base de datos
-├── src/
-│   ├── Controller/        # Controladores
-│   │   ├── AppController.php
-│   │   ├── UsersController.php
-│   │   ├── TasksController.php
-│   │   └── PagosController.php
-│   ├── Model/
-│   │   ├── Table/        # Tablas de la ORM
-│   │   │   ├── UsersTable.php
-│   │   │   ├── TasksTable.php
-│   │   │   └── PagosTable.php
-│   │   └── Entity/       # Entidades
-│   │       ├── User.php
-│   │       ├── Task.php
-│   │       └── Pago.php
-│   └── Application.php   # Clase principal de la app
-├── templates/             # Vistas de CakePHP
-│   ├── layout/           # Plantillas maestro
-│   ├── Users/            # Vistas de usuarios
-│   ├── Tasks/            # Vistas de tareas
-│   └── Pagos/            # Vistas de pagos
-├── vendor/               # Dependencias de Composer
-├── webroot/             # Archivos públicos
-└── tmp/                 # Archivos temporales
-```
-
----
+- PHP 8.2 o superior
+- Composer
+- MariaDB o MySQL 5.7+ (compatible con el driver `Mysql` de CakePHP)
+- Apache con `mod_rewrite` **o** el servidor integrado de PHP/Cake (`bin/cake server`)
 
 ## Instalación
 
-### 1. Clonar o copiar el proyecto
+1. Clonar el repositorio e ir al directorio del proyecto.
+
+2. Instalar dependencias PHP:
+
+   ```bash
+   composer install
+   ```
+
+3. Configurar la base de datos: copiar `config/app_local.example.php` a `config/app_local.php` y editar el array `Datasources` con host, usuario, contraseña y nombre de la base de datos.
+
+4. Crear la base de datos vacía en MariaDB/MySQL.
+
+5. Aplicar el esquema:
+
+   **Opción A — migraciones (recomendado):**
+
+   ```bash
+   bin/cake migrations migrate
+   ```
+
+   **Opción B — SQL manual:** ejecutar el script [config/schema/entregable_tareas.sql](config/schema/entregable_tareas.sql) sobre la misma base donde ya existe la tabla `users` (y el resto de tablas que uses).
+
+## Cómo ejecutar
+
+**Servidor de desarrollo CakePHP:**
 
 ```bash
-cd /ruta/del/proyecto
+bin/cake server -p 8765
 ```
 
-### 2. Instalar dependencias
+Abrir `http://localhost:8765` (la raíz muestra el inicio de sesión).
 
-```bash
-composer install
+**Apache:** configurar el `DocumentRoot` al directorio `webroot/` del proyecto.
+
+final 
+
+# 🐳 Despliegue de Aplicación CakePHP con Podman
+
+## 📌 Descripción
+
+Este proyecto consiste en la contenerización de una aplicación web desarrollada en **CakePHP**, utilizando **Podman** como motor de contenedores.
+
+Se creó una imagen personalizada basada en PHP con Apache, configurando las extensiones necesarias para el correcto funcionamiento del sistema, y se orquestó mediante `podman-compose`.
+
+---
+
+## ⚙️ Tecnologías utilizadas
+
+* PHP 8.2 + Apache
+* CakePHP
+* Podman
+* Podman Compose
+* Linux
+
+---
+
+## 📁 Estructura del proyecto
+
 ```
-
-### 3. Configurar variables de entorno
-
-Copiar el archivo de ejemplo:
-
-```bash
-cp config/.env.example config/.env
-```
-
-Editar `config/.env` con los valores correctos:
-
-```
-```
-
-### 4. Limpiar caché
-
-```bash
-bin/cake cache clear_all
+devops/
+├── Dockerfile
+├── compose.yml
+└── app_ef/   # Aplicación CakePHP
 ```
 
 ---
 
-## Configuración
+## 🚀 Pasos de implementación
 
-### Archivo app_local.php
-
-Editar `config/app_local.php` con los datos de tu base de datos:
-
-```php
-'Datasources' => [
-    'default' => [
-        'host' => '172.25.0.220',
-        'port' => 3306,
-        'username' => 'tu_usuario',
-        'password' => 'tu_contraseña',
-        'database' => 'db_ef',
-    ],
-],
-```
-
----
-
-## Base de Datos
-
-### Crear la base de datos
-
-```sql
-CREATE DATABASE db_ef CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-```
-
-### Importar estructura y datos
+### 1️⃣ Crear carpeta de trabajo
 
 ```bash
-# Desde la línea de comandos
-mysql -u tu_usuario -p db_ef < db_ef.sql
-
-# O desde phpMyAdmin
-# Importar el archivo db_ef.sql
+mkdir ~/devops/
+cd ~/devops/
 ```
 
-### Estructura de Tablas
-
-#### Tabla `users`
-
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| id | INT | ID primario |
-| nombre | VARCHAR(250) | Nombre del usuario |
-| apellido | VARCHAR(250) | Apellido del usuario |
-| correo | VARCHAR(250) | Correo electrónico (único) |
-| password | VARCHAR(255) | Contraseña hasheada |
-| telefono | VARCHAR(50) | Teléfono (opcional) |
-| language | VARCHAR(10) | Idioma (es/en) |
-| rol | ENUM | Rol del usuario (admin/empleado/usuario) |
-| created | DATETIME | Fecha de creación |
-| modified | DATETIME | Fecha de modificación |
-
-#### Tabla `tasks`
-
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| id | INT | ID primario |
-| user_id | INT | ID del usuario propietario |
-| title | VARCHAR(255) | Título de la tarea |
-| description | TEXT | Descripción |
-| status | VARCHAR(32) | Estado (pending/in_progress/completed) |
-| due_date | DATE | Fecha límite |
-| created | DATETIME | Fecha de creación |
-| modified | DATETIME | Fecha de modificación |
-
-#### Tabla `pagos`
-
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| id | INT | ID primario |
-| user_id | INT | ID del usuario propietario |
-| metodo | ENUM | Método de pago |
-| monto | DECIMAL(10,2) | Monto del pago |
-| estado | ENUM | Estado del pago |
-| descripcion | TEXT | Descripción |
-| fecha_pago | DATETIME | Fecha de pago |
-| fecha_creacion | DATETIME | Fecha de creación |
-| fecha_actualizacion | DATETIME | Fecha de modificación |
+📌 **¿Qué hace?**
+Crea una carpeta llamada `devops` y entra en ella para trabajar.
 
 ---
 
-## Ejecución del Proyecto
+### 2️⃣ Colocar la aplicación
 
-### Servidor de desarrollo
+Copiar o clonar el proyecto dentro de la carpeta:
+
+```
+app_ef/
+```
+
+📌 **¿Qué hace?**
+Contiene todo el código fuente de la aplicación CakePHP.
+
+---
+
+### 3️⃣ Crear el Dockerfile
+
+```dockerfile
+FROM php:8.2-apache
+
+# Instalar extensiones necesarias
+RUN apt-get update && apt-get install -y \
+    libicu-dev \
+    && docker-php-ext-install intl pdo pdo_mysql mysqli
+
+# Habilitar mod_rewrite
+RUN a2enmod rewrite
+
+# Copiar aplicación
+COPY app_ef/ /var/www/html/
+
+# Permisos
+RUN chown -R www-data:www-data /var/www/html && \
+    chmod -R 755 /var/www/html
+
+# Puerto
+EXPOSE 80
+```
+
+📌 **¿Qué hace?**
+Define cómo se construye la imagen:
+
+* Usa PHP con Apache
+* Instala extensiones necesarias (`intl`, `pdo_mysql`, etc.)
+* Copia la aplicación al contenedor
+* Configura permisos
+
+---
+
+### 4️⃣ Crear compose.yml
+
+```yaml
+services:
+  php-app:
+    image: ef-app
+    container_name: ef-app
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+```
+
+📌 **¿Qué hace?**
+Define cómo se ejecuta el contenedor:
+
+* Usa la imagen creada (`ef-app`)
+* Expone el puerto 8080
+* Mantiene el contenedor activo
+
+---
+
+### 5️⃣ Configuración de red (opcional)
 
 ```bash
-# Puerto por defecto 8765
-bin/cake server
-
-# Puerto específico
-bin/cake server 8080
+sudo mousepad /etc/containers/containers.conf
 ```
 
-Acceder a: http://localhost:8765
+Agregar:
 
-### Con PHP integrado
+```ini
+[engine]
+network_cmd = "host"
+```
+
+📌 **¿Qué hace?**
+Permite que Podman use la red del host, evitando problemas de conexión.
+
+---
+
+### 6️⃣ Construir la imagen
 
 ```bash
-php -S localhost:8765 -t webroot
+podman build -t ef-app .
 ```
 
----
-
-## Sistema de Roles y Permisos
-
-### Roles disponibles
-
-| Rol | Descripción | Permisos |
-|-----|-------------|----------|
-| **admin** | Administrador | Acceso completo a todos los CRUD (Users, Tasks, Pagos). Gestión de usuarios. |
-| **empleado** | Empleado | CRUD completo de Tasks y Pagos. Solo su perfil. |
-| **usuario** | Usuario estándar | CRUD de sus propias Tasks y Pagos. Solo su perfil. |
-
-### Restricciones importantes
-
-- **El rol 'admin' NO puede ser asignado desde la interfaz**.
-- Solo puede crearse directamente desde phpMyAdmin o mediante SQL.
-- Los usuarios se registran con rol 'usuario' por defecto.
-
-### Matriz de Permisos
-
-| Recurso | Admin | Empleado | Usuario |
-|---------|-------|----------|---------|
-| **Users** | | | |
-| - Ver lista | ✓ | ✗ | ✗ |
-| - Ver perfil (cualquiera) | ✓ | ✗ | ✗ |
-| - Crear usuario | ✓ | ✓ | ✗ |
-| - Editar usuario | ✓ | Propio | Propio |
-| - Eliminar usuario | ✓ | ✗ | ✗ |
-| **Tasks** | | | |
-| - Ver todas | ✓ | ✓ | ✗ |
-| - Crear | ✓ | ✓ | ✓ |
-| - Editar todas | ✓ | Propia | Propia |
-| - Eliminar todas | ✓ | Propia | Propia |
-| **Pagos** | | | |
-| - Ver todos | ✓ | ✓ | ✗ |
-| - Crear | ✓ | ✓ | ✓ |
-| - Editar todos | ✓ | Propio | Propio |
-| - Eliminar todos | ✓ | Propio | Propio |
+📌 **¿Qué hace?**
+Crea una imagen llamada `ef-app` a partir del Dockerfile.
 
 ---
 
-## Credenciales de Ejemplo
-
-### Usuario Administrador (crear manualmente desde phpMyAdmin)
-
-```sql
--- Contraseña: admin123
-INSERT INTO users (nombre, apellido, correo, password, rol) 
-VALUES ('Admin', 'Sistema', 'admin@app.com', '$2y$12$BYcOh1z0Z1KM1ZGxIP4iRuN2YWHjnP/bY3UyjCqwL.1VjPVB64jNy', 'admin');
-```
-
-**Credenciales de acceso**:
-- Correo: admin@app.com
-- Contraseña: admin123
-
-### Usuarios de ejemplo (incluidos en db_ef.sql)
-
-| Correo | Contraseña | Rol |
-|--------|------------|-----|
-| fernandomendez@gmail.com | (hash existente) | usuario |
-| cristia@gmail.com | (hash existente) | usuario |
-| fer.nan@gmail.com | (hash existente) | usuario |
-
----
-
-## Rutas Disponibles
-
-| Ruta | Descripción |
-|------|-------------|
-| / | Redirecciona a login o tareas |
-| /users/login | Iniciar sesión |
-| /users/register | Registrarse |
-| /users/profile | Mi perfil |
-| /tasks | Lista de tareas |
-| /tasks/add | Nueva tarea |
-| /pagos | Lista de pagos |
-| /pagos/add | Nuevo pago |
-
----
-
-## Troubleshooting
-
-### Error de conexión a base de datos
-
-Verificar credenciales en `config/app_local.php` y que el servidor MySQL esté corriendo.
-
-### Error de caché
-
-Limpiar la caché:
-```bash
-bin/cake cache clear_all
-```
-
-### Error de permisos en tmp
+### 7️⃣ Verificar imágenes
 
 ```bash
-chmod -R 777 tmp/
+podman images
 ```
 
+📌 **¿Qué hace?**
+Muestra las imágenes disponibles en el sistema.
+
 ---
+
+### 8️⃣ Ejecutar contenedor
+
+```bash
+podman-compose up
+```
+
+📌 **¿Qué hace?**
+Levanta el contenedor definido en `compose.yml`.
+
+---
+
+### 9️⃣ Acceder a la aplicación
+
+```
+http://localhost:8080
+```
+
+📌 **¿Qué hace?**
+Permite acceder a la aplicación desde el navegador.
+
+---
+
+## 🔍 Comandos útiles
+
+### Ver puertos en uso
+
+```bash
+sudo ss -tuln
+```
+
+📌 Muestra los puertos ocupados en el sistema.
+
+---
+
+### Ver contenedores activos
+
+```bash
+podman ps
+```
+
+📌 Lista los contenedores en ejecución.
+
+---
+
+### Ver logs del contenedor
+
+```bash
+podman logs ef-app
+```
+
+📌 Muestra errores o información del contenedor.
+
+---
+
+## 🛠 Problemas solucionados
+
+* ❌ Error en COPY (ruta incorrecta)
+  ✔ Se corrigió el nombre de carpeta (`app_ef`)
+
+* ❌ Falta de extensión `intl`
+  ✔ Se instaló con `docker-php-ext-install`
+
+* ❌ Error de conexión MySQL
+  ✔ Se agregó `pdo_mysql` y `mysqli`
+
+* ❌ Error de imagen inexistente
+  ✔ Se ejecutó `podman build`
+
+---
+
+## ✅ Resultado final
+
+* Aplicación funcionando en contenedor
+* Acceso vía navegador
+* Entorno reproducible
+* Configuración portable
+
+---
+
+## 👨‍💻 Autor
+
+Proyecto desarrollado como parte de la materia **Tecnología Web II**.
+
+
+## Uso
+
+- **Registro:** enlace «Registrar» en la barra superior (sin sesión).
+- **Inicio de sesión:** `/` (ruta por defecto).
+- **Tareas:** cada usuario solo ve y gestiona sus propias tareas; en el listado hay filtros por estado, rango de fecha límite y texto.
+- **Perfil:** idioma de interfaz entre los anteriores y datos personales; el código se guarda en `perfiles.idioma` (p. ej. `es_ES`, `zh_CN`) y se sincroniza con `users.language`.
+- **Países / Usuarios:** módulos adicionales de ejemplo (requieren sesión).
+
+## Estructura de base de datos relevante
+
+- `users` — usuarios (incluye `language` para compatibilidad).
+- `perfiles` — una fila por usuario (`idioma`, `biografia`).
+- `tareas` — `user_id`, `titulo`, `descripcion_es`, `descripcion_en`, `estado`, `fecha_limite`.
+
+## Documentación del entregable
+
+- [docs/INFORME_IMRD.md](docs/INFORME_IMRD.md) — informe en formato IMRD.
+- [docs/BITACORA_IA.md](docs/BITACORA_IA.md) — bitácora de uso de IA.
+- [docs/EVIDENCIAS.md](docs/EVIDENCIAS.md) — qué capturas o video conviene entregar.
 
 ## Licencia
 
-MIT License - CakePHP Framework
+MIT (igual que el esqueleto oficial de CakePHP).
